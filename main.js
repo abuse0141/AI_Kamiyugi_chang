@@ -189,7 +189,7 @@ client.on("messageCreate", async msg => {
                     let onemore = false
                     do {
                         i++//修正回数のカウント。
-
+                        console.log(margeMessages)
                         msg.channel.sendTyping()//「上柚木綾が入力中...」のメッセージを表示するやつ。15秒くらい有効
 
                         //APIを叩いて返答をもらう。
@@ -197,25 +197,25 @@ client.on("messageCreate", async msg => {
                             model: "gpt-3.5-turbo",
                             messages: margeMessages
                         });
-
                         //もらった返答を確認
                         message = completion.data.choices[0].message.content
 
                         //GPTくんは英語でしか思考しないナショナリストなので語尾が上柚木らしくなりにくい。そのためもしもデスマス調や女言葉で返答されたような気がした場合は修正させる
-                        onemore = (message.indexOf("です") >= 0 || message.indexOf("ます") >= 0 || message.indexOf("だわ") >= 0 || message.indexOf("のよ") >= 0 || message.indexOf("ました") >= 0 || message.indexOf("ません") >= 0 || message.indexOf("でした") >= 0)
+                        onemore = (message.indexOf("です") >= 0 || message.indexOf("ます") >= 0 || message.indexOf("だわ") >= 0 || message.indexOf("のよ") >= 0 || message.indexOf("ました") >= 0 || message.indexOf("ません") >= 0 || message.indexOf("でした") >= 0 || message.indexOf("ください") >= 0)
                         if (onemore) {
                             msg.channel.sendTyping()//「上柚木綾が入力中...」のメッセージを表示するやつ。15秒くらい有効
                             console.log("修正対象:" + message)
-                            //coreScript[0]を用いて、「messageを上柚木の発言らしく修正してくだち！」とお願いする
+                            //MainMessages[0]を用いて、「messageを上柚木の発言らしく修正してくだち！」とお願いする
                             let completion2 = await openai.createChatCompletion({
                                 model: "gpt-3.5-turbo",
-                                messages: [coreScript[0], { role: "user", content: "以下の文章について、文章の口調を上柚木綾らしい口調に修正した文章を返答してください。\n" + message }]
+                                messages: [MainMessages[0], { role: "user", content: "以下の文章について、文章の口調を上柚木綾らしい口調に修正した文章を返答してください。\n" + message }]
                             });
                             message = completion2.data.choices[0].message.content
                             console.log("修正後:" + message)
+
                         }
                         //修正後のやつをもう一回確認
-                        onemore = (message.indexOf("です") >= 0 || message.indexOf("ます") >= 0 || message.indexOf("だわ") >= 0 || message.indexOf("のよ") >= 0 || message.indexOf("ました") >= 0 || message.indexOf("ません") >= 0 || message.indexOf("でした") >= 0)
+                        onemore = (message.indexOf("です") >= 0 || message.indexOf("ます") >= 0 || message.indexOf("だわ") >= 0 || message.indexOf("のよ") >= 0 || message.indexOf("ました") >= 0 || message.indexOf("ません") >= 0 || message.indexOf("でした") >= 0 || message.indexOf("ください") >= 0)
                     } while (onemore);
 
                     //無事上柚木っぽい返答が生成されたらディスコに出力する。
@@ -225,6 +225,7 @@ client.on("messageCreate", async msg => {
                     messages.push({ role: "assistant", content: message })
                 } catch (error) {
                     messages = []
+                    console.log(error)
                     msg.reply("すまんエラーだ。多分トークン制限だな。\n" + "SYSTEM:GPT3との通信中にエラー発生。会話内容をリセットします。")
                     return
                 }
