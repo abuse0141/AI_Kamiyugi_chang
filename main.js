@@ -29,7 +29,7 @@ console.log(coreScript)
 //messagesにユーザーとの会話が入るイメージ
 
 let MainMessages = [
-    { role: "system", content: coreScript },
+    { role: "user", content: coreScript },
 ]
 let messages = []
 let margeMessages = []
